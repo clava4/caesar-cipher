@@ -1,46 +1,38 @@
-import java.util.Scanner;
-
 public class CaesarCipher {
 
-    public static void main(String[] args) {
-        System.out.print("Plaintext: ");
-        final Scanner in = new Scanner(System.in);
-        final String message = in.nextLine();
+    final int NUMBER_OF_LETTERS = 26;
+    final int END_OF_BIG_LETTERS = 90;
+    final int START_OF_SMALL_LETTERS = 96;
+    final int END_OF_SMALL_LETTERS = 122;
 
-        System.out.print("Shift: ");
-        int key = in.nextInt();
-
-        System.out.println(coding(message, keyChanging(key)));
-
-    }
-
-    public static String coding(String message, int key) {
-        final int NUMBEROFLETTERS = 26;
-        final int ENDOFBIGLETTERS = 90;
-        final int STARTOFSMALLLETTERS = 96;
-        final int ENDOFSMALLLETTERS = 122;
-        String cipherMessage = "";
+    public String encryption(String message, int key) {
+        StringBuilder cipherMessage = new StringBuilder();
+        key = keyChanging(key);
 
         for (int i = 0; i < message.length(); i++) {
-            boolean PUNCTUATION = (((int) message.charAt(i) > 31) && ((int) message.charAt(i) < 65)) || (((int) message.charAt(i) > 90) && ((int) message.charAt(i) < 97)) || ((int) message.charAt(i) > 122);
+            if (punctuationExist(message, i)) {
+                cipherMessage.append((char) ((int) message.charAt(i)));
 
-            if (PUNCTUATION == true) {
-                cipherMessage += (char) ((int) message.charAt(i));
+            } else if ((int) message.charAt(i) + key > END_OF_BIG_LETTERS && (int) message.charAt(i) < START_OF_SMALL_LETTERS) {
+                cipherMessage.append((char) (((int) message.charAt(i) + key) - NUMBER_OF_LETTERS));
 
-            } else if ((int) message.charAt(i) + key > ENDOFBIGLETTERS && (int) message.charAt(i) < STARTOFSMALLLETTERS) {
-                cipherMessage += (char) (((int) message.charAt(i) + key) - NUMBEROFLETTERS);
-
-            } else if ((int) message.charAt(i) + key > ENDOFSMALLLETTERS) {
-                cipherMessage += (char) (((int) message.charAt(i) + key) - NUMBEROFLETTERS);
+            } else if ((int) message.charAt(i) + key > END_OF_SMALL_LETTERS) {
+                cipherMessage.append((char) (((int) message.charAt(i) + key) - NUMBER_OF_LETTERS));
 
             } else {
-                cipherMessage += (char) ((int) message.charAt(i) + key);
+                cipherMessage.append((char) ((int) message.charAt(i) + key));
             }
         }
-        return cipherMessage;
+        return cipherMessage.toString();
     }
 
-    public static int keyChanging(int key) {
+    private boolean punctuationExist(String message, int i) {
+        return (((int) message.charAt(i) > 31) && ((int) message.charAt(i) < 65)) ||
+                (((int) message.charAt(i) > 90) && ((int) message.charAt(i) < 97)) ||
+                ((int) message.charAt(i) > 122);
+    }
+
+    private int keyChanging(int key) {
         while (key < 0) {
             key += 26;
         }
